@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-deployment
+  namespace: lgcns
+
+spec:
+  replicas: 1
+  selector: # 서비스가 바라보는 이름
+    matchLabels:
+      app: redis-pod
+
+  template:
+    metadata:
+      labels:
+        app: redis-pod 
+
+    spec:
+      # docker container 
+      containers:
+        - name: redis-container
+          # 혹시 실행 중인 컨테이너를 이미지로 만들고 ecr로 배포할 경우 ecr repo 주소 사용 가능
+          image: redis          
+          ports:
+          - containerPort: 6379
+
+---
+# core service setting
+# core group : pod, service, ConfigMap, Secret, namespace
+apiVersion: v1 
+kind: Service
+metadata:
+  name: redis-service # application.yml에서 찾아가는 이름
+  namespace: lgcns
+spec:
+  type: ClusterIP
+  ports:  # 이 port를 맞춰서 서비스가 라우터로 접근 가능
+  - port: 6379
+    targetPort: 6379
+  selector:
+    app: redis-pod  # 위 selector의 이름과 동일하게

@@ -1,0 +1,94 @@
+# # localhost setting
+# server:
+
+#   # eureka server에 의해 임의로 port가 할당된다. (spring server)
+#   port: 0
+  
+# spring:
+
+#   application:
+#     # api gateway에 의해 http://server.hajihyeok.com/ 접속
+#     # 이후 하단 url pattern에 의해 http://server.hajihyeok.com/user-service 접속
+#     name: user-service
+#     # 이후 controller에 의해 각 서비스 엔드포인트(ex. /users/signIn)에 접근한다.
+
+#   # mariadb settings
+#   datasource:
+#     driver-class-name: org.mariadb.jdbc.Driver
+#     url: jdbc:mariadb://localhost:3306/inspire  
+#     username: root
+#     password: 123456789
+  
+#   jpa:
+#     hibernate: 
+#       # create, create-drop, update, none
+#       ddl-auto: create
+#       # 콘솔출력
+#     show-sql: true     
+#     properties:
+#       hibernate:
+#         # h2
+#         # dialect: org.hibernate.dialect.H2Dialect
+#         # mariadb
+#         dialect: org.hibernate.dialect.MariaDBDialect
+#         format_sql: true 
+  
+#   # redis
+#   # docker run -d --name redis-container -p 6379:6379 redis:7.2
+#   # docker exec -it redis-container redis-cli 
+#   # ping
+#   # docker run -d --name redis-insight -p 8001:5540 redis/redisinsight:latest
+#   # http://localhost:8001
+#   # Host: redis 또는 host.docker.internal , port: 6379
+
+#   data:
+#     redis:
+#       host: localhost
+#       port: 6379
+#       password: 
+#       timeout: 6000ms
+
+# jwt:
+#   secret: jslim-super-secret-key-for-jwt-123456789
+
+# # eureka client user service -> eureka server
+# eureka:
+#   client:
+#     service-url:
+#       defaultZone: http://localhost:8761/eureka
+
+# msa - k8s - aws version
+
+# eks 배포 시 apigateway는 eureka server에 등록하지 않겠다, 라는 의미
+eureka:
+  client:
+    enabled: false
+
+spring:
+  application:
+    name: user-service # 이름
+
+  # mariadb settings
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://${DB_HOST}:3306/inspire?useSSL=true&verifyServerCertificate=false
+    username: ${DB_ADMIN}
+    password: ${DB_PASSWORD}
+
+  data:
+    redis:
+      # pod 실행 중인 redis-service의 이름으로 변경
+      host: redis-service # redis_deployment.yml의 service 이름과 일치해야 한다.
+      port: 6379
+      password: 
+      timeout: 6000ms
+
+  jpa:
+    database: mysql
+    database-platform: org.hibernate.dialect.MariaDBDialect
+    hibernate: 
+      ddl-auto: create
+    show-sql: true
+
+jwt:
+  secret: jslim-super-secret-key-for-jwt-123456789

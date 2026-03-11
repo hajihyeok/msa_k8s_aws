@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apigateway-deployment
+  namespace: lgcns
+
+spec:
+  # 자원공간의 낭비를 방지하고 관리의 편리성을 제공해주는 옵션!
+  revisionHistoryLimit: 2
+
+  replicas: 1
+  selector:
+    matchLabels:
+      app: apigateway  # 서비스에서 찾는 이름
+
+  template:
+    metadata:
+      labels:
+        app: apigateway
+
+    spec:
+      # docker container 
+      containers:
+        - name: apigateway-container
+          # ECR 경로
+          image: 065656773560.dkr.ecr.us-east-1.amazonaws.com/apigateway:latest
+
+          ports:
+          - containerPort: 8080
+
+---
+
+# core service setting
+# core group : pod, service, ConfigMap, Secret, namespace
+apiVersion: v1 
+kind: Service
+metadata:
+  name: apigateway-service # application.yml에서 찾아가는 이름
+  namespace: lgcns
+spec:
+  type: ClusterIP
+  ports:  # 이 port를 맞춰서 서비스가 라우터로 접근 가능
+  - port: 80  # 외부 포트 번호
+    targetPort: 8080  # 내부 포트 번호
+  selector:
+    app: apigateway  # 위 selector의 이름과 동일하게

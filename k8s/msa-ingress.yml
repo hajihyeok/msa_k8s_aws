@@ -1,0 +1,33 @@
+# aws nlb -> ingress controller(pod) -> ingress -> service -> pod
+# >>>> ingress controller install
+# kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.1/deploy/static/provider/aws/deploy.yaml
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: order-ingress
+  namespace: lgcns
+  annotations:
+    # kubernetes.io/ingress.class: nginx
+    # nginx.ingress.kubernetes.io/rewrite-target: /$1 # inspire를 빼주는 역할
+
+spec:
+  ingressClassName: nginx
+  rules:
+    # 레코드로 등록한 도메인 이름
+  - host: server.hajihyeok.com
+    http:
+      paths:
+        # 사용자가 치고 들어올 수 있는 경로
+        # http://server.hajihyeok.com/
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            # routing을 위해서 apigateway를 찾고 해당 서비스에서 실제 라우팅이 발생한다.
+            # http://server.hajihyeok.com/user-service
+            # http://server.hajihyeok.com/product-service
+            # http://server.hajihyeok.com/order-service
+            name: apigateway-service # apigateway-depl.yml에 있는 service 이름과 일치해야 한다.
+            port:
+              number: 80
