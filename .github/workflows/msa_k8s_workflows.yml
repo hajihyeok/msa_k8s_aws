@@ -49,71 +49,134 @@ jobs:
           kubectl apply -f ./k8s/msa-kafka.yml
           kubectl apply -f ./k8s/msa-redis.yml
 
-      # step 7 : build and push docker image to ecr
-      # apigateway
+      # step 7 : build and push docker image to ecr & kubectl apply
+      # # 1) apigateway
+      # - name: apigateway build and push docker image to ecr
+      #   env:
+      #     REGISTRY: 065656773560.dkr.ecr.us-east-1.amazonaws.com
+      #     REPOSITORY: apigateway
+      #     IMAGE_TAG: latest
+      #   run: |
+      #     docker build -t ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG} -f ./apigateway/Dockerfile ./apigateway
+      #     docker push ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG}
+
+      # - name: apigateway kubectl apply
+      #   run: |
+      #     kubectl apply -f ./apigateway/k8s/apigateway-depl.yml
+      #     kubectl rollout restart deployment apigateway-deployment -n lgcns
+
+      # # 2) user
+      # - name: user build and push docker image to ecr
+      #   env:
+      #     REGISTRY: 065656773560.dkr.ecr.us-east-1.amazonaws.com
+      #     REPOSITORY: user-service
+      #     IMAGE_TAG: latest
+      #   run: |
+      #     docker build -t ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG} -f ./user/Dockerfile ./user
+      #     docker push ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG}
+
+      # - name: user kubectl apply
+      #   run: |
+      #     kubectl apply -f ./user/k8s/user-depl.yml
+      #     kubectl rollout restart deployment user-deployment -n lgcns
+
+      # # 3) product
+      # - name: product build and push docker image to ecr
+      #   env:
+      #     REGISTRY: 065656773560.dkr.ecr.us-east-1.amazonaws.com
+      #     REPOSITORY: product-service
+      #     IMAGE_TAG: latest
+      #   run: |
+      #     docker build -t ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG} -f ./product/Dockerfile ./product
+      #     docker push ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG}
+
+      # - name: product kubectl apply
+      #   run: |
+      #     kubectl apply -f ./product/k8s/product-depl.yml
+      #     kubectl rollout restart deployment product-deployment -n lgcns
+
+      # # 4) order
+      # - name: order build and push docker image to ecr
+      #   env:
+      #     REGISTRY: 065656773560.dkr.ecr.us-east-1.amazonaws.com
+      #     REPOSITORY: order-service
+      #     IMAGE_TAG: latest
+      #   run: |
+      #     docker build -t ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG} -f ./order/Dockerfile ./order
+      #     docker push ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG}
+
+      # - name: order kubectl apply
+      #   run: |
+      #     kubectl apply -f ./order/k8s/order-depl.yml
+      #     kubectl rollout restart deployment order-deployment -n lgcns
+
+
+#############
+
+      # 1) apigateway
       - name: apigateway build and push docker image to ecr
+        working-directory: ./apigateway
         env:
           REGISTRY: 065656773560.dkr.ecr.us-east-1.amazonaws.com
           REPOSITORY: apigateway
           IMAGE_TAG: latest
         run: |
-          docker build -t ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG} -f ./apigateway/Dockerfile ./apigateway
+          docker build -t ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG} -f Dockerfile .
           docker push ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG}
 
       - name: apigateway kubectl apply
+        working-directory: ./apigateway/k8s
         run: |
-          kubectl apply -f ./apigateway/k8s/apigateway-depl.yml
+          kubectl apply -f apigateway-depl.yml
           kubectl rollout restart deployment apigateway-deployment -n lgcns
 
-      # user
+      # 2) user
       - name: user build and push docker image to ecr
+        working-directory: ./user
         env:
           REGISTRY: 065656773560.dkr.ecr.us-east-1.amazonaws.com
           REPOSITORY: user-service
           IMAGE_TAG: latest
         run: |
-          docker build -t ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG} -f ./user/Dockerfile ./user
+          docker build -t ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG} -f Dockerfile .
           docker push ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG}
 
       - name: user kubectl apply
+        working-directory: ./user/k8s
         run: |
-          kubectl apply -f ./user/k8s/user-depl.yml
+          kubectl apply -f user-depl.yml
           kubectl rollout restart deployment user-deployment -n lgcns
 
-      # product
+      # 3) product
       - name: product build and push docker image to ecr
+        working-directory: ./product
         env:
           REGISTRY: 065656773560.dkr.ecr.us-east-1.amazonaws.com
           REPOSITORY: product-service
           IMAGE_TAG: latest
         run: |
-          docker build -t ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG} -f ./product/Dockerfile ./product
+          docker build -t ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG} -f Dockerfile .
           docker push ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG}
 
       - name: product kubectl apply
+        working-directory: ./product/k8s
         run: |
-          kubectl apply -f ./product/k8s/product-depl.yml
+          kubectl apply -f product-depl.yml
           kubectl rollout restart deployment product-deployment -n lgcns
 
-      # order
+      # 4) order
       - name: order build and push docker image to ecr
+        working-directory: ./order
         env:
           REGISTRY: 065656773560.dkr.ecr.us-east-1.amazonaws.com
           REPOSITORY: order-service
           IMAGE_TAG: latest
         run: |
-          docker build -t ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG} -f ./order/Dockerfile ./order
+          docker build -t ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG} -f Dockerfile .
           docker push ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG}
 
       - name: order kubectl apply
+        working-directory: ./order/k8s
         run: |
-          kubectl apply -f ./order/k8s/order-depl.yml
+          kubectl apply -f order-depl.yml
           kubectl rollout restart deployment order-deployment -n lgcns
-
-    #   # step 8
-    #   - name: kubectrl apply
-    #     run: |
-    #       kubectl apply -f k8s/order_redis.yml
-    #       kubectl apply -f k8s/order_deployment.yml
-    #       kubectl apply -f k8s/order_ingress.yml
-    #       kubectl rollout restart deployment order-deployment -n lgcns
