@@ -49,15 +49,22 @@ jobs:
           kubectl apply -f ./k8s/msa-kafka.yml
           kubectl apply -f ./k8s/msa-redis.yml
 
-      # # step 7 : build and push docker image to ecr
-      # - name: build and push docker image to ecr
-      #   env:
-      #     REGISTRY: 065656773560.dkr.ecr.us-east-1.amazonaws.com
-      #     REPOSITORY: order-hajihyeok-backend
-      #     IMAGE_TAG: latest
-      #   run: |
-      #     docker build -t ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG} -f Dockerfile .
-      #     docker push ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG}
+      # step 7 : build and push docker image to ecr
+      # apigateway
+      - name: apigateway build and push docker image to ecr
+        env:
+          REGISTRY: 065656773560.dkr.ecr.us-east-1.amazonaws.com
+          REPOSITORY: apigateway
+          IMAGE_TAG: latest
+        run: |
+          docker build -t ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG} -f Dockerfile .
+          docker push ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG}
+
+      - name: apigateway kubectl apply
+        run: |
+          kubectl apply -f ./apigateway/k8s/apygateway-depl.yml
+          kubectl rollout restart deployment/apigateway-depl
+
 
     #   # step 8
     #   - name: kubectrl apply
