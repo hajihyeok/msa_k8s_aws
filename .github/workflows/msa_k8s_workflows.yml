@@ -110,8 +110,7 @@ jobs:
       #     kubectl apply -f ./order/k8s/order-depl.yml
       #     kubectl rollout restart deployment order-deployment -n lgcns
 
-
-#############
+      # working-directory version
 
       # 1) apigateway
       - name: apigateway build and push docker image to ecr
