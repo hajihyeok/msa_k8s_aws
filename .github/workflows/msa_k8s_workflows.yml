@@ -57,13 +57,13 @@ jobs:
           REPOSITORY: apigateway
           IMAGE_TAG: latest
         run: |
-          docker build -t ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG} -f ./${REPOSITORY}/Dockerfile .
+          docker build -t ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG} -f ./apigateway/Dockerfile .
           docker push ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG}
 
       - name: apigateway kubectl apply
         run: |
           kubectl apply -f ./apigateway/k8s/apygateway-depl.yml
-          kubectl rollout restart deployment/apigateway-depl
+          kubectl rollout restart deployment apigateway-depl -n lgcns
 
 
     #   # step 8
