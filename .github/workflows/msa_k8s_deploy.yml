@@ -1,0 +1,43 @@
+# name: deploy  # setting workflow name
+
+# # setting Trigger
+# on:
+#   push:       # push main branch
+#     branches:
+#       - main
+
+# # setting Jobs
+# jobs:
+#   # job name
+#   build-and-deploy:
+
+#     # runner
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       # step 1 : source code checkout
+#       - name: checkout github
+#         uses: actions/checkout@v2 # https://docs.github.com/ko/actions
+
+#       # step 2 : kubectl client install
+#       - name: install kubectl
+#         uses: azure/setup-kubectl@v3
+#         with:
+#           version: "v1.34.1"
+
+#       # step 3 : aws authentication
+#       - name: aws configure
+#         uses: aws-actions/configure-aws-credentials@v1
+#         with:
+#           aws-access-key-id: ${{ secrets.AWS_KEY }}
+#           aws-secret-access-key: ${{ secrets.AWS_SECRET }}
+#           aws-region: us-east-1
+
+#       # step 4 : aws eks cluster update
+#       - name: aws eks cluster update
+#         run: aws eks update-kubeconfig --region us-east-1 --name lgcns-hajihyeok-cluster
+
+#       # step 5 : aws ecr login
+#       - name: aws ecr login
+#         uses: aws-actions/amazon-ecr-login@v1
+
