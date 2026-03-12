@@ -33,25 +33,33 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET }}
           aws-region: us-east-1
 
-    #   # step 4
-    #   - name: aws eks cluster update
-    #     run: aws eks update-kubeconfig --region us-east-1 --name lgcns-hajihyeok-cluster
+      # step 4 : aws eks cluster update
+      - name: aws eks cluster update
+        run: aws eks update-kubeconfig --region us-east-1 --name lgcns-hajihyeok-cluster
 
-    #   # step 5
-    #   - name: aws ecr login
-    #     uses: aws-actions/amazon-ecr-login@v1
+      # step 5 : aws ecr login
+      - name: aws ecr login
+        uses: aws-actions/amazon-ecr-login@v1
 
-    #   # step 6
-    #   - name: build and push docker image to ecr
-    #     env:
-    #       REGISTRY: 065656773560.dkr.ecr.us-east-1.amazonaws.com
-    #       REPOSITORY: order-hajihyeok-backend
-    #       IMAGE_TAG: latest
-    #     run: |
-    #       docker build -t ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG} -f Dockerfile .
-    #       docker push ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG}
+      # step 6 : deploy infra (ingress, kafka, redis, zookeeper, rabbitmq)
+      - name: deploy infra
+        run: |
+          kubectl apply -f ./k8s/msa_ingress.yml
+          kubectl apply -f ./k8s/order_zookeeper.yml
+          kubectl apply -f ./k8s/order_kafka.yml
+          kubectl apply -f ./k8s/order_redis.yml
 
-    #   # step 7
+      # # step 7 : build and push docker image to ecr
+      # - name: build and push docker image to ecr
+      #   env:
+      #     REGISTRY: 065656773560.dkr.ecr.us-east-1.amazonaws.com
+      #     REPOSITORY: order-hajihyeok-backend
+      #     IMAGE_TAG: latest
+      #   run: |
+      #     docker build -t ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG} -f Dockerfile .
+      #     docker push ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG}
+
+    #   # step 8
     #   - name: kubectrl apply
     #     run: |
     #       kubectl apply -f k8s/order_redis.yml
