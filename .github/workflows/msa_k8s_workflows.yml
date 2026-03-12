@@ -62,7 +62,7 @@ jobs:
 
       - name: apigateway kubectl apply
         run: |
-          kubectl apply -f ./apigateway/k8s/apygateway-depl.yml
+          kubectl apply -f ./apigateway/k8s/apigateway-depl.yml
           kubectl rollout restart deployment apigateway-deployment -n lgcns
 
 
